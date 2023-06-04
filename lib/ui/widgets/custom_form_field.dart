@@ -5,6 +5,9 @@ class CustomFormField extends StatelessWidget {
   final String title, hintText;
   final bool obsecureText;
   final int maxLines;
+  final TextEditingController?  controller;
+  final String? Function(String?) validator;
+  final value;
 
   const CustomFormField({
     Key? key,
@@ -12,6 +15,9 @@ class CustomFormField extends StatelessWidget {
     required this.hintText,
     this.obsecureText = false,
     this.maxLines = 1,
+    this.controller,
+    required this.validator ,
+    this.value = null,
   }) : super(key: key);
 
   @override
@@ -29,8 +35,11 @@ class CustomFormField extends StatelessWidget {
             height: 6,
           ),
           TextFormField(
+            autovalidateMode: AutovalidateMode.always,
+            controller: controller,
             cursorColor: kBlackColor,
             maxLines: maxLines,
+            obscureText: obsecureText,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(vertical: 15 , horizontal: 10),
               hintText: hintText,
@@ -44,6 +53,8 @@ class CustomFormField extends StatelessWidget {
                 ),
               ),
             ),
+            validator: validator,
+            initialValue: value,
           )
         ],
       ),

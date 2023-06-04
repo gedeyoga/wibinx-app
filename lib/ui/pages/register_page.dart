@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wibinx_app/blocs/cubit/auth_cubit.dart';
 import 'package:wibinx_app/shared/theme.dart';
 import 'package:wibinx_app/ui/widgets/custom_button.dart';
 import 'package:wibinx_app/ui/widgets/custom_form_field.dart';
@@ -8,19 +10,96 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthCubit authCubit = context.read<AuthCubit>();
+    TextEditingController nameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+
     Widget inputNama() {
-      return CustomFormField(title: 'Nama', hintText: 'Cth: Jagoan Olshop');
+      String? validationError;
+      return BlocConsumer(
+        bloc: authCubit,
+        builder: (context, state) {
+          return CustomFormField(
+            title: 'Nama',
+            controller: nameController,
+            hintText: 'Cth: Jagoan Olshop',
+            validator: (data) {
+              if (data == null) {
+                return 'Nama tidak boleh kosong!';
+              } else {
+                return validationError;
+              }
+            },
+          );
+        },
+        listener: (context, state) {
+          validationError = null;
+          if (state is AuthFailed) {
+            if (state.error['errors']['name'] != null) {
+              validationError = state.error['errors']['name'][0];
+            }
+          }
+        },
+      );
     }
 
-    Widget inputUsername() {
-      return CustomFormField(title: 'Username', hintText: 'Cth: jagoan_olshop');
+    Widget inputEmail() {
+      String? validationError;
+      return BlocConsumer(
+        bloc: authCubit,
+        builder: (context, state) {
+          return CustomFormField(
+            title: 'Email',
+            controller: emailController,
+            hintText: 'Cth: jagoan_olshop',
+            validator: (data) {
+              if (data == null) {
+                return 'Email tidak boleh kosong!';
+              } else {
+                return validationError;
+              }
+            },
+          );
+        },
+        listener: (context, state) {
+          validationError = null;
+          if (state is AuthFailed) {
+            if (state.error['errors']['email'] != null) {
+              validationError = state.error['errors']['email'][0];
+            }
+          }
+        },
+      );
     }
 
     Widget inputPassword() {
-      return CustomFormField(
-        title: 'Password',
-        hintText: 'Masukkan Password',
-        obsecureText: true,
+      String? validationError;
+      return BlocConsumer(
+        bloc: authCubit,
+        builder: (context, state) {
+          return CustomFormField(
+            title: 'Password',
+            controller: passwordController,
+            hintText: 'Masukkan Password',
+            obsecureText: true,
+            validator: (data) {
+              if (data == null) {
+                return 'Password tidak boleh kosong!';
+              } else {
+                return validationError;
+              }
+            },
+          );
+        },
+        listener: (context, state) {
+          validationError = null;
+          if (state is AuthFailed) {
+            if (state.error['errors']['password'] != null) {
+              validationError = state.error['errors']['password'][0];
+            }
+          }
+        },
       );
     }
 
@@ -37,23 +116,12 @@ class RegisterPage extends StatelessWidget {
                 Container(
                   width: 114,
                   height: 49,
-                  
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/image_logo_wibinx.png'),
                     ),
                   ),
                 ),
-                // Container(
-                //   width: 135,
-                //   height: 141,
-                //   decoration: BoxDecoration(
-                //     image: DecorationImage(
-                //       image:
-                //           AssetImage('assets/image_register_ilustration.png'),
-                //     ),
-                //   ),
-                // )
               ],
             ),
           ),
@@ -73,15 +141,35 @@ class RegisterPage extends StatelessWidget {
                   height: 25,
                 ),
                 inputNama(),
-                inputUsername(),
+                inputEmail(),
                 inputPassword(),
                 SizedBox(
                   height: 42,
                 ),
-                CustomButton(title: 'Daftar', onPressed: () {
-                  Navigator.pushNamed(context, '/register-page/step-profile-page');
-                }),
-                SizedBox(height: 28,),
+                BlocConsumer(
+                  bloc: authCubit,
+                  builder: (context, state) {
+                    return CustomButton(
+                        title: 'Daftar',
+                        onPressed: () {
+                          authCubit.register({
+                            'name': nameController.text,
+                            'email': emailController.text,
+                            'password': passwordController.text
+                          });
+                        });
+                  },
+                  listener: (context, state) {
+                    if (state is AuthSuccess) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/register-page/step-profile-page',
+                          (Route<dynamic> route) => false);
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 28,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -89,9 +177,14 @@ class RegisterPage extends StatelessWidget {
                       'Sudah punya akun ?',
                       style: greyTextStyle.copyWith(fontWeight: medium),
                     ),
-                    TextButton(onPressed: (){
-                      Navigator.pushNamed(context, '/login-page');
-                    }, child: Text('Masuk' , style: primaryTextStyle.copyWith(fontWeight: medium),))
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login-page');
+                        },
+                        child: Text(
+                          'Masuk',
+                          style: primaryTextStyle.copyWith(fontWeight: medium),
+                        ))
                   ],
                 )
               ],

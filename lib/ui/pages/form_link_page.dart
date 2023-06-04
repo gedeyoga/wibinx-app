@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:wibinx_app/shared/theme.dart';
-import 'package:wibinx_app/ui/widgets/card_widget.dart';
 import 'package:wibinx_app/ui/widgets/custom_button.dart';
 import 'package:wibinx_app/ui/widgets/custom_form_field.dart';
 import 'package:wibinx_app/ui/widgets/custom_form_field_group.dart';
@@ -44,11 +43,13 @@ class FormLinkPage extends StatelessWidget {
             ListView(
               children: [
                 CustomFormField(
-                    title: 'Nama', hintText: 'Masukkan Nama Link..'),
+                    title: 'Nama', hintText: 'Masukkan Nama Link..' , validator: (data) => null,
+                ),
                 CustomFormFieldGroup(
                   title: 'Link ' + title,
                   hintText: 'Masukan link...',
                   icon: icon,
+                  validator: (data) => null,
                 ),
               ],
             ),

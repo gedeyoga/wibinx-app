@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wibinx_app/shared/theme.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -10,10 +11,18 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  final storage = const FlutterSecureStorage();
   @override
   void initState() {
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushNamed(context, '/register-page');
+    Timer(Duration(seconds: 3), () async {
+
+      var token = await storage.read(key: 'token');
+
+      if(token != null) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/main-page', (Route<dynamic> route) => false);
+      } else {
+        Navigator.pushNamed(context, '/register-page');
+      }
     });
     super.initState();
   }

@@ -5,6 +5,8 @@ class CustomFormFieldGroup extends StatelessWidget {
   final String title, hintText, icon;
   final bool obsecureText;
   final int maxLines;
+   final TextEditingController?  controller;
+  final String? Function(String?) validator;
 
   const CustomFormFieldGroup({
     Key? key,
@@ -13,6 +15,9 @@ class CustomFormFieldGroup extends StatelessWidget {
     required this.icon,
     this.obsecureText = false,
     this.maxLines = 1,
+    this.controller,
+    required this.validator ,
+   
   }) : super(key: key);
 
   @override
@@ -32,6 +37,8 @@ class CustomFormFieldGroup extends StatelessWidget {
           TextFormField(
             cursorColor: kBlackColor,
             maxLines: maxLines,
+            controller: controller,
+            validator: validator,
             decoration: InputDecoration(
               prefixIcon: Container(
                 width: 29,

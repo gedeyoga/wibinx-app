@@ -17,6 +17,12 @@ class LinkUserSuccess extends LinkUserState {
   const LinkUserSuccess(this.message);
 }
 
+class LinkUserDeleted extends LinkUserState {
+  final String message;
+
+  const LinkUserDeleted(this.message);
+}
+
 class LinkUserFailed extends LinkUserState {
   final Map<String, dynamic> error;
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wibinx_app/blocs/cubit/page_cubit.dart';
 import 'package:wibinx_app/shared/theme.dart';
+import 'package:wibinx_app/ui/pages/choose_theme_page.dart';
 import 'package:wibinx_app/ui/pages/home_page.dart';
 import 'package:wibinx_app/ui/pages/profile_user_page.dart';
 
@@ -17,6 +19,8 @@ class MainPage extends StatelessWidget {
         case 0:
           return const HomePage();
         case 1:
+          return const ChooseThemePage();
+        case 2:
           return ProfileUserPage();
         default:
           return const HomePage();
@@ -44,14 +48,32 @@ class MainPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.home,
-                        size: 35,
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return Icon(
+                            Icons.home,
+                            size: 35,
+                            color: state == 0 ? kPrimaryColor : kGreyColor,
+                          );
+                        },
                       ),
-                      Text(
-                        'Home',
-                        style: blackTextStyle.copyWith(
-                            fontWeight: semibold, fontSize: 16),
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return Text(
+                            'Home',
+                            style: state == 0
+                                ? primaryTextStyle.copyWith(
+                                    fontWeight: semibold,
+                                    fontSize: 16,
+                                  )
+                                : greyTextStyle.copyWith(
+                                    fontWeight: semibold,
+                                    fontSize: 16,
+                                  ),
+                          );
+                        },
                       )
                     ],
                   ),
@@ -65,14 +87,71 @@ class MainPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.person,
-                        size: 35,
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return SvgPicture.asset(
+                            'assets/feather.svg',
+                            width: 30.0,
+                            height: 30.0,
+                            allowDrawingOutsideViewBox: true,
+                            color: state == 1 ? kPrimaryColor : kGreyColor,
+                          );
+                        },
                       ),
-                      Text(
-                        'Akun',
-                        style: blackTextStyle.copyWith(
-                            fontWeight: semibold, fontSize: 16),
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return Text(
+                            'Tema',
+                            style: state == 1
+                                ? primaryTextStyle.copyWith(
+                                    fontWeight: semibold,
+                                    fontSize: 16,
+                                  )
+                                : greyTextStyle.copyWith(
+                                    fontWeight: semibold, fontSize: 16),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Flexible(
+                child: GestureDetector(
+                  onTap: () {
+                    pageCubit.setPage(2);
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return Icon(
+                            Icons.person,
+                            size: 35,
+                            color: state == 2 ? kPrimaryColor : kGreyColor,
+                          );
+                        },
+                      ),
+                      BlocBuilder(
+                        bloc: pageCubit,
+                        builder: (context, state) {
+                          return Text(
+                            'Akun',
+                            style: state == 2
+                                ? primaryTextStyle.copyWith(
+                                    fontWeight: semibold,
+                                    fontSize: 16,
+                                  )
+                                : greyTextStyle.copyWith(
+                                    fontWeight: semibold,
+                                    fontSize: 16,
+                                  ),
+                          );
+                        },
                       )
                     ],
                   ),

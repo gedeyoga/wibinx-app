@@ -22,7 +22,6 @@ class WebsiteUserCubit extends Cubit<WebsiteUserState> {
         emit(WebsiteUserSuccess(websiteUser, data['message']));
       } else {
         var data = json.decode(response.body);
-        print(data);
         emit(WebsiteUserFailed(data));
       }
   }
@@ -41,6 +40,11 @@ class WebsiteUserCubit extends Cubit<WebsiteUserState> {
         var data = json.decode(response.body);
         emit(WebsiteUserFailed(data));
       }
+  }
+
+  void linkType(String link) {
+    emit(WebsiteUserLoading());
+    emit(LinkNameTyping(link));
   }
 
 

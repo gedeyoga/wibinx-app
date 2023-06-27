@@ -80,14 +80,19 @@ class StepContactPage extends StatelessWidget {
 
       formType.forEach((data) {
         try {
-          LinkMasterModel linkMaster =
-              linkMasters.firstWhere((item) => item.slug_link == data['type']);
+          LinkMasterModel linkMaster = linkMasters.firstWhere((item) => item.slug_link == data['type']);
+          var links = responseDecode['data']['websites'][0]['link_users'] as List;
+
+          Map<String,dynamic> linkUser = links.firstWhere((element) => element['link_master']['slug_link'] == data['type']);
+
           if (linkMaster != null) {
             dataForm.add({
               'website_user_id': responseDecode['data']['websites'][0]['id'],
               'link_master_id': linkMaster.id,
               'name': linkMaster.link_name,
               'url': data['url'],
+              'id': linkUser['id'],
+              'section_id': linkUser['section']['id'],
             });
           }
         } catch (e) {}

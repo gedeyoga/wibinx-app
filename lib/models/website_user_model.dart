@@ -8,6 +8,7 @@ class WebsiteUserModel extends Equatable {
   final String name;
   final String description;
   final String link_name;
+  final List sections;
 
   WebsiteUserModel({
     this.id,
@@ -16,6 +17,7 @@ class WebsiteUserModel extends Equatable {
     this.theme_id,
     this.description = '',
     this.link_name = '',
+    this.sections = const [],
   });
 
   @override

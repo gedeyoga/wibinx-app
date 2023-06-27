@@ -7,7 +7,9 @@ class CustomFormField extends StatelessWidget {
   final int maxLines;
   final TextEditingController?  controller;
   final String? Function(String?) validator;
+  final Function(String)? onChanged;
   final value;
+  final String keyboardType;
 
   const CustomFormField({
     Key? key,
@@ -18,6 +20,8 @@ class CustomFormField extends StatelessWidget {
     this.controller,
     required this.validator ,
     this.value = null,
+    this.onChanged,
+    this.keyboardType = 'text',
   }) : super(key: key);
 
   @override
@@ -40,6 +44,7 @@ class CustomFormField extends StatelessWidget {
             cursorColor: kBlackColor,
             maxLines: maxLines,
             obscureText: obsecureText,
+            keyboardType: keyboardType == 'number' ? TextInputType.number : TextInputType.text,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(vertical: 15 , horizontal: 10),
               hintText: hintText,
@@ -55,6 +60,7 @@ class CustomFormField extends StatelessWidget {
             ),
             validator: validator,
             initialValue: value,
+            onChanged: onChanged,
           )
         ],
       ),

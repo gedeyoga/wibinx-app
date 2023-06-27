@@ -12,19 +12,20 @@ class HomePage extends StatelessWidget {
 
   final storage = const FlutterSecureStorage();
 
-
   @override
   Widget build(BuildContext context) {
     AuthCubit authCubit = context.read<AuthCubit>();
 
+    fetchAuthProfile() async {
+      var userId = await storage.read(key: 'userId');
+
+      authCubit.authProfile(int.parse(userId.toString()));
+    }
+
     Widget cardProfileUser() {
-      return BlocConsumer(
-        bloc: authCubit,
-        buildWhen: (previous, current) {
-          
-          return current is AuthProfile;
-        },
-        builder: (context, state) {
+      return FutureBuilder(
+        future: fetchAuthProfile(),
+        builder: (context, snapshot) {
           return Container(
             margin: EdgeInsets.only(
               bottom: 50,
@@ -37,48 +38,132 @@ class HomePage extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(right: 15, top: 20),
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(color: kGreyColor),
+                BlocBuilder(
+                  bloc: authCubit,
+                  builder: (context, state) {
+                    BoxDecoration image = BoxDecoration(color: kGreyColor);
+                    if (state is AuthProfile) {
+                      if (state.user.websites?[0]['logo'] != null) {
+                        image = BoxDecoration(
+                          color: kGreyColor,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                state.user.websites?[0]['logo']['original_url'],
+                                headers: {
+                                  'Connection': 'Keep-Alive',
+                                  'Keep-Alive': 'timeout=5, max=1000'
+                                }),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }
+                      return Container(
+                        margin: EdgeInsets.only(right: 15, top: 20),
+                        width: 70,
+                        height: 70,
+                        decoration: image,
+                      );
+                    } else {
+                      return Container(
+                        margin: EdgeInsets.only(right: 15, top: 20),
+                        width: 70,
+                        height: 70,
+                        decoration: image,
+                      );
+                    }
+                  },
                 ),
                 Flexible(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '-',
-                        overflow: TextOverflow.ellipsis,
-                        style: blackTextStyle.copyWith(
-                          fontWeight: semibold,
-                          fontSize: 16,
-                        ),
+                      BlocBuilder(
+                        bloc: authCubit,
+                        builder: (context, state) {
+                          if (state is AuthProfile) {
+                            return Text(
+                              state.user.websites?[0]['name'],
+                              overflow: TextOverflow.ellipsis,
+                              style: blackTextStyle.copyWith(
+                                fontWeight: semibold,
+                                fontSize: 16,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              '-',
+                              overflow: TextOverflow.ellipsis,
+                              style: blackTextStyle.copyWith(
+                                fontWeight: semibold,
+                                fontSize: 16,
+                              ),
+                            );
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        'https://wibinx.com/',
-                        style: primaryTextStyle,
-                        overflow: TextOverflow.ellipsis,
+                      BlocBuilder(
+                        bloc: authCubit,
+                        builder: (context, state) {
+                          if (state is AuthProfile) {
+                            return Text(
+                              'https://wibinx.com/' +
+                                  state.user.websites?[0]['link_name'],
+                              style: primaryTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          } else {
+                            return Text(
+                              'https://wibinx.com/',
+                              style: primaryTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 25,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Dibuat pada',
-                            style: outlineTextStyle.copyWith(fontWeight: light),
-                          ),
-                          Text(
-                            '2023-09-02',
-                            style: outlineTextStyle.copyWith(fontWeight: light),
-                          )
-                        ],
+                      BlocBuilder(
+                        bloc: authCubit,
+                        builder: (context, state) {
+                          if (state is AuthProfile) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Dibuat pada',
+                                  style: outlineTextStyle.copyWith(
+                                      fontWeight: light),
+                                ),
+                                Text(
+                                  state.user.websites?[0]['created_at'],
+                                  style: outlineTextStyle.copyWith(
+                                      fontWeight: light),
+                                )
+                              ],
+                            );
+                          } else {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Dibuat pada',
+                                  style: outlineTextStyle.copyWith(
+                                      fontWeight: light),
+                                ),
+                                Text(
+                                  '-',
+                                  style: outlineTextStyle.copyWith(
+                                      fontWeight: light),
+                                )
+                              ],
+                            );
+                          }
+                        },
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 15),
@@ -102,9 +187,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
           );
-        },
-        listener: (context, state) {
-          
         },
       );
     }
@@ -153,7 +235,11 @@ class HomePage extends StatelessWidget {
                 CardMenuWebsite(
                   title: 'Profil Website',
                   description: 'Pengaturan URL , Nama , deskripsi',
-                  onTap: () => {},
+                  onTap:   () async {
+                   await Navigator.pushNamed(context, '/profile-page');
+
+                   fetchAuthProfile();
+                  },
                   icon: 'assets/icon_profile_website.png',
                 ),
                 CardMenuWebsite(
@@ -181,14 +267,15 @@ class HomePage extends StatelessWidget {
                 CardMenuWebsite(
                   title: 'Kontak',
                   description: 'Pengaturan URL Whatsapp dan Line',
-                  onTap: () => {},
+                  onTap: () => {Navigator.pushNamed(context, '/contact-page')},
                   icon: 'assets/icon_contact.png',
                 ),
                 CardMenuWebsite(
                   title: 'Produk',
                   description:
                       'Pengaturan produk yang akan ditampilkan di website',
-                  onTap: () => {},
+                  onTap: () =>
+                      {Navigator.pushNamed(context, '/product-page')},
                   icon: 'assets/icon_product.png',
                 ),
 

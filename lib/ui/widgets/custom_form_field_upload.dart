@@ -7,11 +7,17 @@ import 'package:wibinx_app/shared/theme.dart';
 class CustomFormFieldUpload extends StatefulWidget {
   final String title;
   final int maxLines;
+  final Function onUploaded;
+  final String? imageUrl;
 
   const CustomFormFieldUpload({
     Key? key,
     required this.title,
     this.maxLines = 1,
+    required this.onUploaded,
+    this.imageUrl,
+
+
   }) : super(key: key);
 
   @override
@@ -23,19 +29,23 @@ class _CustomFormFieldUploadState extends State<CustomFormFieldUpload> {
 
   final ImagePicker picker = ImagePicker();
 
-  Future getImage(ImageSource media) async {
+  
+
+  @override
+  Widget build(BuildContext context) {
+    Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
 
     setState(() {
       image = img;
+
+      widget.onUploaded(img);
     });
     
   }
-
-  @override
-  Widget build(BuildContext context) {
+  
     Widget viewImage() {
-      if (image != null) {
+      if (image is XFile) {
         return Row(
           children: [
             Container(
@@ -51,6 +61,27 @@ class _CustomFormFieldUploadState extends State<CustomFormFieldUpload> {
             Container(
               width: 120,
               child: Text(File(image!.path).path.split('/').last,
+                  overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        );
+      } else if(widget.imageUrl is String) {
+         return Row(
+          children: [
+            Container(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageUrl.toString()),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              width: 120,
+              margin: EdgeInsets.only(left: 20),
+              child: Text('Foto',
                   overflow: TextOverflow.ellipsis),
             ),
           ],
@@ -103,7 +134,9 @@ class _CustomFormFieldUploadState extends State<CustomFormFieldUpload> {
                 )
               ],
             ),
-          )
+          ),
+          
+
         ],
       ),
     );

@@ -3,11 +3,15 @@ import 'package:wibinx_app/blocs/cubit/auth_cubit.dart';
 import 'package:wibinx_app/blocs/cubit/link_user_cubit.dart';
 import 'package:wibinx_app/blocs/cubit/page_cubit.dart';
 import 'package:wibinx_app/blocs/cubit/website_user_cubit.dart';
+import 'package:wibinx_app/ui/pages/choose_theme_page.dart';
+import 'package:wibinx_app/ui/pages/contact_page.dart';
 import 'package:wibinx_app/ui/pages/custom_link_page.dart';
 import 'package:wibinx_app/ui/pages/login_page.dart';
 import 'package:wibinx_app/ui/pages/main_page.dart';
 import 'package:wibinx_app/ui/pages/marketplace_page.dart';
 import 'package:wibinx_app/ui/pages/notification_page.dart';
+import 'package:wibinx_app/ui/pages/product_page.dart';
+import 'package:wibinx_app/ui/pages/profile_page.dart';
 import 'package:wibinx_app/ui/pages/register_page.dart';
 import 'package:wibinx_app/ui/pages/social_media_page.dart';
 import 'package:wibinx_app/ui/pages/splash_page.dart';
@@ -61,6 +65,10 @@ class MyApp extends StatelessWidget {
           '/social-media-page': (context) => const SocialMediaPage(),
           '/custom-link-page': (context) => const CustomLinkPage(),
           '/marketplace-page': (context) => const MarketPlacePage(),
+          '/contact-page': (context) => const ContactPage(),
+          '/profile-page': (context) => const ProfilePage(),
+          '/product-page': (context) => const ProductPage(),
+          '/choose-theme-page': (context) => const ChooseThemePage(),
         },
       ),
     );

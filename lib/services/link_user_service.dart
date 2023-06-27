@@ -10,14 +10,6 @@ class LinkUserService {
 
   Future updateMultipleLinkUser(Map<String, dynamic> request) async {
     var token = await storage.read(key: 'token');
-
-    // Map<String ,dynamic> formData = {};
-
-    // for (var i = 0; i < request['data'].length; i++) {
-    //   formData.addAll({
-    //     "data[$i]" : request['data'][i],
-    //   });
-    // }
     
     var response = await http.post(Uri.parse(baseUrl + 'api/link-users/update-multiple'),
         headers: {
@@ -25,6 +17,33 @@ class LinkUserService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(request),
+    );
+
+    return response;
+  }
+
+  Future updateLinkUser(Map<String, dynamic> request) async {
+    var token = await storage.read(key: 'token');
+    
+    var response = await http.put(Uri.parse(baseUrl + 'api/link-users/' + request['id'].toString()),
+        headers: {
+          'Authorization': 'Bearer ' + token.toString(),
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(request),
+    );
+
+    return response;
+  }
+
+  Future deleteLinkUser(int linkUserId) async {
+    var token = await storage.read(key: 'token');
+    
+    var response = await http.delete(Uri.parse(baseUrl + 'api/link-users/' + linkUserId.toString()),
+        headers: {
+          'Authorization': 'Bearer ' + token.toString(),
+          'Content-Type': 'application/json',
+        },
     );
 
     return response;

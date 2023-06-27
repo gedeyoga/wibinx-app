@@ -18,7 +18,34 @@ class LinkUserCubit extends Cubit<LinkUserState> {
       
       emit(LinkUserSuccess(data['message']));
     } else {
-      print(response.body);
+      var data = json.decode(response.body);
+      emit(LinkUserFailed(data));
+    }
+  }
+
+  updateLinkUser(Map<String , dynamic> request) async {
+    emit(LinkUserLoading());
+    var response = await LinkUserService().updateLinkUser(request);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      
+      emit(LinkUserSuccess(data['message']));
+    } else {
+      var data = json.decode(response.body);
+      emit(LinkUserFailed(data));
+    }
+  }
+
+  deleteLinkUser(int linkUserId) async {
+    emit(LinkUserLoading());
+    var response = await LinkUserService().deleteLinkUser(linkUserId);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      
+      emit(LinkUserDeleted(data['message']));
+    } else {
       var data = json.decode(response.body);
       emit(LinkUserFailed(data));
     }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:wibinx_app/blocs/cubit/link_user_cubit.dart';
 import 'package:wibinx_app/models/link_master_model.dart';
+import 'package:wibinx_app/models/link_user_model.dart';
 import 'package:wibinx_app/services/auth_service.dart';
 import 'package:wibinx_app/services/link_master_service.dart';
 import 'package:wibinx_app/shared/theme.dart';
@@ -124,16 +125,21 @@ class StepSocialPage extends StatelessWidget {
       formType.forEach((data) {
         try {
           LinkMasterModel linkMaster = linkMasters.firstWhere((item) => item.slug_link == data['type']);
+          var links = responseDecode['data']['websites'][0]['link_users'] as List;
+
+          Map<String,dynamic> linkUser = links.firstWhere((element) => element['link_master']['slug_link'] == data['type']);
           if(linkMaster != null) {
             dataForm.add({
               'website_user_id': responseDecode['data']['websites'][0]['id'],
               'link_master_id': linkMaster.id,
               'name': linkMaster.link_name,
               'url': data['url'],
+              'id' : linkUser['id'],
+              'section_id' : linkUser['section']['id'],
             });
           }
         } catch (e) {
-          
+          print(e);
         }
       });
 

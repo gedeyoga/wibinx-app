@@ -23,3 +23,9 @@ class WebsiteUserFailed extends WebsiteUserState {
 
   const WebsiteUserFailed(this.error);
 }
+
+class LinkNameTyping extends WebsiteUserState {
+  final String link;
+
+  const LinkNameTyping(this.link);
+}

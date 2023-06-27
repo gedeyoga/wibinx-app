@@ -82,6 +82,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthSuccess(data, token != null));
     } else {
       var data = json.decode(response.body);
+      print(data);
       emit(AuthFailed(data));
     }
   }

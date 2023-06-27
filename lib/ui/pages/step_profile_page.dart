@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:wibinx_app/blocs/cubit/website_user_cubit.dart';
 import 'package:wibinx_app/shared/theme.dart';
 import 'package:wibinx_app/ui/widgets/custom_button.dart';
@@ -23,6 +24,8 @@ class _StepProfilePageState extends State<StepProfilePage> {
   @override
   Widget build(BuildContext context) {
     WebsiteUserCubit websiteUserCubit = context.read<WebsiteUserCubit>();
+
+    XFile? logo;
     final storage = const FlutterSecureStorage();
 
 
@@ -115,7 +118,12 @@ class _StepProfilePageState extends State<StepProfilePage> {
     }
 
     Widget inputUploadLogo() {
-      return CustomFormFieldUpload(title: 'Logo Website');
+      return CustomFormFieldUpload(
+        title: 'Logo Website',
+        onUploaded: (image) {
+          logo = image;
+        },
+      );
     }
 
     Widget formCard() {
@@ -155,6 +163,7 @@ class _StepProfilePageState extends State<StepProfilePage> {
         'name' : nameController.text,
         'description' : descriptionController.text,
         'link_name' : linkNameController.text,
+        'logo': logo,
       });
 
     }
